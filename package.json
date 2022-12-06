@@ -1,0 +1,11 @@
+{
+  "name": "tiktok-playground",
+  "uuid": "1eb92abd-ea1f-439a-ba76-6df46fbed2ea",
+  "version": "0.0.1",
+  "creator": {
+    "version": "3.6.2"
+  },
+  "dependencies": {
+    "fengari-web": "^0.1.4"
+  }
+}
