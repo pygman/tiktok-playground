@@ -1,9 +1,13 @@
-import { _decorator, Component, Node } from 'cc';
+import * as cc from 'cc';
+import { _decorator } from 'cc';
 import { default as fengari } from 'fengari-web';
 const { ccclass, property } = _decorator;
 
 @ccclass('playground')
-export class playground extends Component {
+export class playground extends cc.Component {
+
+    @property({type: cc.Prefab})
+    private check: cc.Prefab;
 
     onLoad() {
         console.log('onLoad');
@@ -20,7 +24,10 @@ export class playground extends Component {
     }
 
     start() {
-
+        // todo m * n
+        const check1 = cc.instantiate(this.check)
+        check1.parent = this.node;
+        check1.setPosition(0, 0);
     }
 
     update(deltaTime: number) {
