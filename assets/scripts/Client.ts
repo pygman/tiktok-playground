@@ -377,9 +377,10 @@ export class Client extends Component {
             skill: 'jump',
             race: 'g',
             tribe: 'a',
-            program: '',
+            program: 'return "ok"',
             name: `卡牌 ${i}`,
-            texture: `https://caihong.love/tiktok-playground/assets/cards/r${(i + 1).toString().padStart(2, '0')}.png`,
+            // texture: `https://caihong.love/tiktok-playground/assets/cards/r${(i + 1).toString().padStart(2, '0')}.png`,
+            texture: ``,
         })).map((card) => ({
             data: card, outpoint: {
                 tx_hash: '0x0',

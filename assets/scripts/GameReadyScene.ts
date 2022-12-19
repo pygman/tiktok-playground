@@ -1,6 +1,7 @@
 import * as cc from 'cc';
 import { _decorator, Component, Input, Node } from 'cc';
 import { Card, Client, PerosnalItem} from "db://assets/scripts/Client";
+import { default as fengari } from 'fengari-web';
 
 const { ccclass, property } = _decorator;
 
@@ -14,6 +15,8 @@ export class GameReadyManage extends Component {
     private content: cc.Node;
     private client: Client;
 
+    @property({type: cc.Prefab})
+    private msgBoxPrefab: cc.Prefab;
     @property({type: cc.Prefab})
     private cardPrefab: cc.Prefab;
     private cardPerosnalItems: PerosnalItem[];
@@ -37,7 +40,7 @@ export class GameReadyManage extends Component {
         });
         this.node.on(Input.EventType.TOUCH_START, (_) => {
             console.log(`node clicked`);
-            cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -700, 0) }).start();
+            cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -700, 0) }, { easing: 'elasticIn' }).start();
             setTimeout(() => {
                 if (this.tik !== -1) {
                     this.content.getChildByName(`Card${this.tik}`).getComponent(cc.Sprite).color = cc.Color.WHITE;
@@ -60,8 +63,106 @@ export class GameReadyManage extends Component {
             this.client.start_tiktok_battle(this.cardPerosnalItems[this.tik].outpoint, this.cardPerosnalItems[this.tok].outpoint).then((resp) => {
                 console.log('game start!!');
                 console.log(resp);
+                const msgBoxNode = cc.instantiate(this.msgBoxPrefab);
+                msgBoxNode.name = `MsgBox`;
+                msgBoxNode.parent = this.node;
+                msgBoxNode.getChildByName('msg').getComponent(cc.Label).string = `Battle Committed hash: \n${resp}`;
+                msgBoxNode.setPosition(0, 500);
+                cc.tween(msgBoxNode)
+                    .to(0.5, { position: new cc.Vec3(0, 300, 0) }, { easing: 'elasticOut' })
+                    .delay(3)
+                    .to(0.5, { position: new cc.Vec3(0, 500, 0) }, { easing: 'elasticIn' })
+                    .start();
+                setTimeout(() => {
+                    msgBoxNode.destroy();
+                }, 8000);
+                this.doBattle();
             })
         });
+    }
+
+    doBattle() {
+        const content = this.node.getChildByName('Steps').getChildByName('view').getChildByName('content');
+        content.removeAllChildren();
+        for (this.round = 0; this.round < 20; this.round++) {
+            this.node.getChildByName('Round').getComponent(cc.Label).string = this.round.toString();
+            this.cards[this.tik].program
+            let tikResult;
+            try {
+                tikResult = fengari.load(`
+                    local round = ${this.round}
+                    -- local object = ${this.cards[this.tok]}
+                    ${this.cards[this.tik].program}
+                `)();
+            } catch (e) {
+                console.error(e);
+                break;
+            }
+            console.log(tikResult);
+            const tikItem = new cc.Node();
+            tikItem.name = `tikItem${this.round}`;
+            tikItem.layer = cc.Layers.Enum.UI_2D;
+            tikItem.addComponent(cc.Label);
+            tikItem.getComponent(cc.Label).color = cc.Color.BLACK;
+            tikItem.getComponent(cc.Label).fontSize = 16;
+            tikItem.getComponent(cc.Label).string = `Tik: ${tikResult}`;
+            tikItem.getComponent(cc.UITransform).setContentSize(100, 25);
+            tikItem.parent = content;
+            tikItem.setPosition(-80, -10 - this.round * 30);
+
+            this.cards[this.tik].program
+            let tokResult;
+            try {
+                tokResult = fengari.load(`
+                    local round = ${this.round}
+                    -- local object = ${this.cards[this.tik]}
+                    ${this.cards[this.tik].program}
+                `)();
+            } catch (e) {
+                console.error(e);
+                break;
+            }
+            console.log(tokResult);
+            const tokItem = new cc.Node(`tokItem${this.round}`);
+            tokItem.layer = cc.Layers.Enum.UI_2D;
+            tokItem.addComponent(cc.Label);
+            tokItem.getComponent(cc.Label).color = cc.Color.BLACK;
+            tokItem.getComponent(cc.Label).fontSize = 16;
+            tokItem.getComponent(cc.Label).string = `Tok: ${tikResult}`;
+            tokItem.getComponent(cc.UITransform).setContentSize(100, 25);
+            tokItem.parent = content;
+            tokItem.setPosition(20, -25 - this.round * 30);
+
+            if (tikResult === '游戏结束' || tikResult === 'Game Over' || tokResult === '游戏结束' || tokResult === 'Game Over') {
+                break;
+            }
+        }
+        if (this.round === 20) {
+            const overItem = new cc.Node(`tokItem${this.round}`);
+            overItem.layer = cc.Layers.Enum.UI_2D;
+            overItem.addComponent(cc.Label);
+            overItem.getComponent(cc.Label).color = cc.Color.BLACK;
+            overItem.getComponent(cc.Label).fontSize = 16;
+            overItem.getComponent(cc.Label).string = `游戏结束`;
+            overItem.getComponent(cc.UITransform).setContentSize(100, 25);
+            overItem.parent = content;
+            overItem.setPosition(0, -650);
+        }
+        /*
+        const msgBoxNode = cc.instantiate(this.msgBoxPrefab);
+        msgBoxNode.name = `MsgBox`;
+        msgBoxNode.parent = this.node;
+        msgBoxNode.getChildByName('msg').getComponent(cc.Label).string = `Game Over`;
+        msgBoxNode.setPosition(0, 500);
+        cc.tween(msgBoxNode)
+            .to(0.5, { position: new cc.Vec3(0, 300, 0) }, { easing: 'elasticOut' })
+            .delay(3)
+            .to(0.5, { position: new cc.Vec3(0, 500, 0) }, { easing: 'elasticIn' })
+            .start();
+        setTimeout(() => {
+            msgBoxNode.destroy();
+        }, 8000);
+         */
     }
 
     onTikCardClick() {
@@ -71,7 +172,7 @@ export class GameReadyManage extends Component {
             if (this.tik !== -1) {
                 this.content.getChildByName(`Card${this.tik}`).getComponent(cc.Sprite).color = cc.Color.CYAN;
             }
-            cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -100, 0) }).start();
+            cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -100, 0) }, { easing: 'elasticOut' }).start();
         }
     }
 
@@ -82,7 +183,7 @@ export class GameReadyManage extends Component {
             if (this.tok !== -1) {
                 this.content.getChildByName(`Card${this.tok}`).getComponent(cc.Sprite).color = cc.Color.CYAN;
             }
-            cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -100, 0) }).start();
+            cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -100, 0) }, { easing: 'elasticOut'}).start();
         }
     }
 
@@ -94,6 +195,9 @@ export class GameReadyManage extends Component {
             }
             this.cardPerosnalItems = perosnalItems;
             this.cards = perosnalItems.map((p) => p.data as Card);
+
+            // TODO filter none program
+            // this.loadCards(this.cards.filter((card) => card.program));
             this.loadCards(this.cards);
         })
     }
@@ -110,10 +214,12 @@ export class GameReadyManage extends Component {
         cardNode.getComponent(cc.Sprite).color = cc.Color.CYAN;
         cardNode.setPosition(0, 0);
         const card = this.cards[i];
-        cc.loader.load({ url: card.texture, type: 'png' }, (err, texture) => {
-            if (err) return;
-            cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(texture as cc.ImageAsset);
-        })
+        if (card.texture) {
+            cc.loader.load({ url: card.texture, type: 'png' }, (err, texture) => {
+                if (err) return;
+                cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(texture as cc.ImageAsset);
+            });
+        }
         cardNode.getChildByName('title').getComponent(cc.Label).string = card.name;
         cardNode.getChildByName('desc').getComponent(cc.Label).string = `  ${card.rarity}\nlevel: ${card.level}\nweapon: ${card.weapon}\nskill: ${card.skill}\n`;
         cardNode.on(Input.EventType.TOUCH_END, (_) => {
@@ -144,7 +250,7 @@ export class GameReadyManage extends Component {
                 this.tik = i;
                 const tikSprite = this.content.getChildByName(`Card${i}`).getComponent(cc.Sprite);
                 tikSprite.color = cc.Color.CYAN;
-                cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -700, 0) }).start();
+                cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -700, 0) }, { easing: 'elasticIn' }).start();
                 setTimeout(() => tikSprite.color = cc.Color.WHITE, 500);
             }
             if (this.turn === 1) {
@@ -156,7 +262,7 @@ export class GameReadyManage extends Component {
                 this.tok = i;
                 const tokSprite = this.content.getChildByName(`Card${i}`).getComponent(cc.Sprite);
                 tokSprite.color = cc.Color.CYAN;
-                cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -700, 0) }).start();
+                cc.tween(this.node.getChildByName('CardsBoard')).to(0.5, { position: new cc.Vec3(0, -700, 0) }, { easing: 'elasticIn' }).start();
                 setTimeout(() => tokSprite.color = cc.Color.WHITE, 500);
             }
         }
@@ -166,10 +272,12 @@ export class GameReadyManage extends Component {
             cardNode.name = `Card${i}`;
             cardNode.parent = this.content;
             cardNode.setPosition([-320, 0, 320][i % 3], -180 - Math.floor(i / 3) * 400);
-            cc.loader.load({ url: card.texture, type: 'png' }, (err, texture) => {
-                if (err) return;
-                cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(texture as cc.ImageAsset);
-            })
+            if (card.texture) {
+                cc.loader.load({ url: card.texture, type: 'png' }, (err, texture) => {
+                    if (err) return;
+                    cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(texture as cc.ImageAsset);
+                });
+            }
             // cc.assetManager.loadRemote(card.texture, { ext: 'png' }, (err, asset) => {
             // if (err) return;
             //     cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(asset as cc.ImageAsset);

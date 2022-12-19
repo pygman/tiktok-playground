@@ -12,6 +12,10 @@ export class CardManage extends Component {
 
     @property({type: cc.Prefab})
     private cardPrefab: cc.Prefab;
+    @property({type: cc.Prefab})
+    private bombPrefab: cc.Prefab;
+    @property({type: cc.Prefab})
+    private msgBoxPrefab: cc.Prefab;
     private cardPerosnalItems: PerosnalItem[];
     private cards: Card[];
 
@@ -91,7 +95,7 @@ export class CardManage extends Component {
             if (this.selected !== -1) {
                 this.content.getChildByName(`Card${this.selected}`).getComponent(cc.Sprite).color = cc.Color.WHITE;
                 this.selected = -1;
-                cc.tween(this.node.getChildByName('Code')).to(0.5, { position: new cc.Vec3(0, -550, 0) }).start();
+                cc.tween(this.node.getChildByName('Code')).to(0.5, { position: new cc.Vec3(0, -500, 0) }, { easing: 'elasticIn' }).start();
                 this.node.getChildByName('Code').getComponent(cc.EditBox).string = '';
             }
         });
@@ -129,7 +133,7 @@ export class CardManage extends Component {
 
         const cardClick = (i: number) => {
             if (this.selected === -1) {
-                cc.tween(this.node.getChildByName('Code')).to(0.5, { position: new cc.Vec3(0, -150, 0) }).start();
+                cc.tween(this.node.getChildByName('Code')).to(0.5, { position: new cc.Vec3(0, -300, 0) }, { easing: 'elasticOut' }).start();
             }
             if (this.selected === i) {
                 this.content.getChildByName(`Card${i}`).getComponent(cc.Sprite).color = cc.Color.WHITE;
@@ -143,24 +147,128 @@ export class CardManage extends Component {
             }
         }
 
+        const cardMerge = (i: number) => {
+            if (this.selected === -1) {
+                const msgBoxNode = cc.instantiate(this.msgBoxPrefab);
+                msgBoxNode.name = `MsgBox`;
+                msgBoxNode.parent = this.node;
+                msgBoxNode.getChildByName('msg').getComponent(cc.Label).string = `Please left click to choose a card first`;
+                msgBoxNode.setPosition(0, 500);
+                cc.tween(msgBoxNode)
+                    .to(0.5, { position: new cc.Vec3(0, 300, 0) }, { easing: 'elasticOut' })
+                    .delay(3)
+                    .to(0.5, { position: new cc.Vec3(0, 500, 0) }, { easing: 'elasticIn' })
+                    .start();
+                setTimeout(() => {
+                    msgBoxNode.destroy();
+                }, 8000);
+                return;
+            }
+            if (this.selected === i) {
+                const msgBoxNode = cc.instantiate(this.msgBoxPrefab);
+                msgBoxNode.name = `MsgBox`;
+                msgBoxNode.parent = this.node;
+                msgBoxNode.getChildByName('msg').getComponent(cc.Label).string = `Can not merge to itself`;
+                msgBoxNode.setPosition(0, 500);
+                cc.tween(msgBoxNode)
+                    .to(0.5, { position: new cc.Vec3(0, 300, 0) }, { easing: 'elasticOut' })
+                    .delay(3)
+                    .to(0.5, { position: new cc.Vec3(0, 500, 0) }, { easing: 'elasticIn' })
+                    .start();
+                setTimeout(() => {
+                    msgBoxNode.destroy();
+                }, 8000);
+                return;
+            } else {
+                console.log(`do merge ${this.selected} ${i}`);
+                const cardLeft = this.cards[this.selected];
+                const cardLeftNode = cc.instantiate(this.cardPrefab)
+                cardLeftNode.name = `CardLeft`;
+                cardLeftNode.parent = this.node;
+                cardLeftNode.setPosition(-720, 0);
+                if (cardLeft.texture) {
+                    cc.loader.load({ url: cardLeft.texture, type: 'png' }, (err, texture) => {
+                        if (err) return;
+                        cardLeftNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(texture as cc.ImageAsset);
+                    });
+                }
+                cardLeftNode.getChildByName('title').getComponent(cc.Label).string = cardLeft.name;
+                cardLeftNode.getChildByName('desc').getComponent(cc.Label).string = `  ${cardLeft.rarity}\nlevel: ${cardLeft.level}\nweapon: ${cardLeft.weapon}\nskill: ${cardLeft.skill}\n`;
+
+                const cardRight = this.cards[i];
+                const cardRightNode = cc.instantiate(this.cardPrefab)
+                cardRightNode.name = `CardRight`;
+                cardRightNode.parent = this.node;
+                cardRightNode.setPosition(720, 0);
+                if (cardRight.texture) {
+                    cc.loader.load({ url: cardRight.texture, type: 'png' }, (err, texture) => {
+                        if (err) return;
+                        cardRightNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(texture as cc.ImageAsset);
+                    });
+                }
+                cardRightNode.getChildByName('title').getComponent(cc.Label).string = cardRight.name;
+                cardRightNode.getChildByName('desc').getComponent(cc.Label).string = `  ${cardRight.rarity}\nlevel: ${cardRight.level}\nweapon: ${cardRight.weapon}\nskill: ${cardRight.skill}\n`;
+
+                cc.tween(cardLeftNode)
+                    .to(1.2, { position: new cc.Vec3(-60, 0, 0) }, { easing: 'elasticOut' })
+                    .start();
+                cc.tween(cardRightNode)
+                    .to(1.2, { position: new cc.Vec3(60, 0, 0) }, { easing: 'elasticOut' })
+                    .start();
+
+                setTimeout(() => {
+                    const bombNode = cc.instantiate(this.bombPrefab);
+                    bombNode.name = 'Bomb';
+                    bombNode.parent = this.node;
+                    bombNode.setPosition(0, 0);
+                    bombNode.getComponent(cc.Animation).play('bomb');
+                }, 800);
+                setTimeout(() => {
+                    this.node.getChildByName('CardLeft').destroy();
+                    this.node.getChildByName('CardRight').destroy();
+                    this.node.getChildByName('Bomb').destroy();
+                }, 2000);
+                // this.client.merge_cards(this.cards[this.selected], this.cards[i])
+                const msgBoxNode = cc.instantiate(this.msgBoxPrefab);
+                msgBoxNode.name = `MsgBox`;
+                msgBoxNode.parent = this.node;
+                msgBoxNode.getChildByName('msg').getComponent(cc.Label).string = `merged cards hash: \n 0x0`;
+                msgBoxNode.setPosition(0, 500);
+                cc.tween(msgBoxNode)
+                    .to(0.5, { position: new cc.Vec3(0, 300, 0) }, { easing: 'elasticOut' })
+                    .delay(3)
+                    .to(0.5, { position: new cc.Vec3(0, 500, 0) }, { easing: 'elasticIn' })
+                    .start();
+                setTimeout(() => {
+                    msgBoxNode.destroy();
+                }, 8000);
+            }
+        }
+
         cards.forEach((card, i) => {
             const cardNode = cc.instantiate(this.cardPrefab)
             cardNode.name = `Card${i}`;
             cardNode.parent = this.content;
             cardNode.setPosition([-320, 0, 320][i % 3], -180 - Math.floor(i / 3) * 400);
-            cc.loader.load({ url: card.texture, type: 'png' }, (err, texture) => {
-                if (err) return;
-                cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(texture as cc.ImageAsset);
-            })
+            if (card.texture) {
+                cc.loader.load({ url: card.texture, type: 'png' }, (err, texture) => {
+                    if (err) return;
+                    cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(texture as cc.ImageAsset);
+                });
+            }
             // cc.assetManager.loadRemote(card.texture, { ext: 'png' }, (err, asset) => {
             // if (err) return;
             //     cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(asset as cc.ImageAsset);
             // })
             cardNode.getChildByName('title').getComponent(cc.Label).string = card.name;
             cardNode.getChildByName('desc').getComponent(cc.Label).string = `  ${card.rarity}\nlevel: ${card.level}\nweapon: ${card.weapon}\nskill: ${card.skill}\n`;
-            cardNode.on(Input.EventType.TOUCH_END, (_) => {
-                console.log(`card${i} clicked`);
-                cardClick(i);
+            cardNode.on(Input.EventType.MOUSE_UP, (event) => {
+                console.log(`card${i} ${event.getButton()} clicked`);
+                if (event.getButton() === 0) {
+                    cardClick(i);
+                } else {
+                    cardMerge(i)
+                }
             });
         })
     }

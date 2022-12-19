@@ -1716,7 +1716,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": -550,
+      "y": -500,
       "z": 0
     },
     "_lrot": {
@@ -1762,7 +1762,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": -298,
-      "y": 150,
+      "y": 100,
       "z": 0
     },
     "_lrot": {
@@ -1799,7 +1799,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 598,
-      "height": 300
+      "height": 200
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1867,7 +1867,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": -298,
-      "y": 150,
+      "y": 100,
       "z": 0
     },
     "_lrot": {
@@ -1904,7 +1904,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 598,
-      "height": 300
+      "height": 200
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1938,7 +1938,7 @@
     "_actualFontSize": 20,
     "_fontSize": 20,
     "_fontFamily": "Arial",
-    "_lineHeight": 300,
+    "_lineHeight": 200,
     "_overflow": 1,
     "_enableWrapText": true,
     "_font": null,
@@ -1963,7 +1963,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 600,
-      "height": 300
+      "height": 200
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2203,6 +2203,14 @@
     "__prefab": null,
     "cardPrefab": {
       "__uuid__": "e9952d6b-ac59-4a80-b07d-c65bbfc0ecb5",
+      "__expectedType__": "cc.Prefab"
+    },
+    "bombPrefab": {
+      "__uuid__": "18c72c37-c827-4954-beae-963d8f716d95",
+      "__expectedType__": "cc.Prefab"
+    },
+    "msgBoxPrefab": {
+      "__uuid__": "4d459844-139f-461c-b387-ee7424b77663",
       "__expectedType__": "cc.Prefab"
     },
     "_id": "69wZwrW9JAnoJC8LRJK6xU"

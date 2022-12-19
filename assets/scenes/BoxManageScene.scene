@@ -1241,6 +1241,10 @@
       "__uuid__": "2c45b089-73ec-4180-9fb2-203fbbefecae",
       "__expectedType__": "cc.Prefab"
     },
+    "msgBoxPrefab": {
+      "__uuid__": "4d459844-139f-461c-b387-ee7424b77663",
+      "__expectedType__": "cc.Prefab"
+    },
     "_id": "1ebknDpzpNkZwkEZys9PQS"
   },
   {

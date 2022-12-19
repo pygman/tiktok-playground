@@ -12,6 +12,8 @@ export class BoxManage extends Component {
 
     @property({type: cc.Prefab})
     private boxPrefab: cc.Prefab;
+    @property({type: cc.Prefab})
+    private msgBoxPrefab: cc.Prefab;
     private boxPerosnalItems: PerosnalItem[];
     private boxes: Box[];
 
@@ -64,7 +66,19 @@ export class BoxManage extends Component {
             if (this.selected !== -1) {
                 this.node.getChildByName(`Box${this.selected}`).getComponent(cc.Animation).play('open');
                 this.client.open_box(this.boxPerosnalItems[this.selected].outpoint).then((resp) => {
-                    console.log(`Do Buy Card ${this.selected} success`);
+                    const msgBoxNode = cc.instantiate(this.msgBoxPrefab);
+                    msgBoxNode.name = `MsgBox`;
+                    msgBoxNode.parent = this.node;
+                    msgBoxNode.getChildByName('msg').getComponent(cc.Label).string = `Do Buy Box ${this.selected} success hash:\n${resp}`;
+                    msgBoxNode.setPosition(0, 500);
+                    cc.tween(msgBoxNode)
+                        .to(0.5, { position: new cc.Vec3(0, 300, 0) }, { easing: 'elasticOut' })
+                        .delay(3)
+                        .to(0.5, { position: new cc.Vec3(0, 500, 0) }, { easing: 'elasticIn' })
+                        .start();
+                    setTimeout(() => {
+                        msgBoxNode.destroy();
+                    }, 8000);
                 })
             }
         });
