@@ -8,6 +8,7 @@ const {ccclass, property} = _decorator;
 export class CardManage extends Component {
     private selected: number = -1;
     private mergeSet: Set<number> = new Set<number>();
+    private programs: string[];
     private content: cc.Node;
     private client: Client;
 
@@ -101,7 +102,7 @@ export class CardManage extends Component {
                 this.content.getChildByName(`Card${this.selected}`).getComponent(cc.Sprite).color = cc.Color.WHITE;
                 this.selected = -1;
                 cc.tween(this.node.getChildByName('Code')).to(0.5, { position: new cc.Vec3(0, -500, 0) }, { easing: 'elasticIn' }).start();
-                this.node.getChildByName('Code').getComponent(cc.EditBox).string = '';
+                this.programs[this.selected] = this.node.getChildByName('Code').getComponent(cc.EditBox).string
             }
         });
         this.node.getChildByName('DoUpload').on(Input.EventType.TOUCH_END, (_) => {
@@ -115,6 +116,9 @@ export class CardManage extends Component {
                 console.log(`Do Upload Program ${this.selected} success ${resp}`);
             });
         });
+        this.node.getChildByName('Code').on(Input.EventType.MOUSE_UP, (event) => {
+            event.propagationStopped = true;
+        });
     }
 
     start() {
@@ -125,6 +129,7 @@ export class CardManage extends Component {
             }
             this.cardPerosnalItems = perosnalItems;
             this.cards = perosnalItems.map((p) => p.data as Card);
+            this.programs = this.cards.map((c) => c.program);
             this.loadCards(this.cards);
         })
     }
@@ -147,8 +152,10 @@ export class CardManage extends Component {
                 if (this.selected !== -1) {
                     this.content.getChildByName(`Card${this.selected}`).getComponent(cc.Sprite).color = cc.Color.WHITE;
                 }
+                this.programs[this.selected] = this.node.getChildByName('Code').getComponent(cc.EditBox).string
                 this.selected =  i;
                 this.content.getChildByName(`Card${i}`).getComponent(cc.Sprite).color = cc.Color.CYAN;
+                this.node.getChildByName('Code').getComponent(cc.EditBox).string = this.programs[i];
             }
         }
 

@@ -394,7 +394,7 @@ export class Client extends Component {
   //             skill: "jump",
   //             race: "g",
   //             tribe: "a",
-  //             program: "",
+  //             program: `return "ok${i}"`,
   //             name: `卡牌 ${i}`,
   //           }))
   //           .map((card) => ({
