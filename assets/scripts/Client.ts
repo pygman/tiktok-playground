@@ -68,7 +68,7 @@ export class Client extends Component {
     this.privkey = privkey;
     this.address = address;
     this.project_typeargs =
-      "0x6f7efd4a0dea388dcd260b97dce553b6ef75551aa3bea412e40686689880a70f";
+      "0x2a63084aef05678b086b1203e2491d4548e9d447250ad1394faaf6eb9da07848";
     console.log(window.document.documentElement);
     setTimeout(() => {
       if (!document.getElementById("ellipticScript")) {
@@ -246,6 +246,8 @@ export class Client extends Component {
   }
 
   public upload_card_program(card: Outpoint, program: string): Promise<TxHash> {
+    program = program.replace(/"/g, "'").replace(/\n/g, "\\n");
+    program = '"' + program + '"';
     return this.make_transaction_digest(`set_card_program(${program})`, [
       this.raw_outpoint(card),
     ]).then((result) => {
@@ -318,6 +320,7 @@ export class Client extends Component {
         .map((item) => {
           let id = item.data.id;
           item.data.name = `卡牌 ${id}`;
+          item.data.program = item.data.program || "";
           return item;
         });
     });
