@@ -221,7 +221,8 @@ export class GameReadyManage extends Component {
             });
         }
         cardNode.getChildByName('title').getComponent(cc.Label).string = card.name;
-        cardNode.getChildByName('desc').getComponent(cc.Label).string = `  ${card.rarity}\nlevel: ${card.level}\nweapon: ${card.weapon}\nskill: ${card.skill}\n`;
+        cardNode.getChildByName('desc').getComponent(cc.Label).string =
+            `  ${card.rarity}\nlevel: ${card.level}\nweapon: ${card.weapon}\nskill: ${card.skill}\nrace: ${card.race}\ntribe: ${card.tribe}\n`;
         cardNode.on(Input.EventType.TOUCH_END, (_) => {
             console.log(`card${i} clicked`);
             if (nodeName === 'TikCard') {
@@ -283,7 +284,8 @@ export class GameReadyManage extends Component {
             //     cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(asset as cc.ImageAsset);
             // })
             cardNode.getChildByName('title').getComponent(cc.Label).string = card.name;
-            cardNode.getChildByName('desc').getComponent(cc.Label).string = `  ${card.rarity}\nlevel: ${card.level}\nweapon: ${card.weapon}\nskill: ${card.skill}\n`;
+            cardNode.getChildByName('desc').getComponent(cc.Label).string =
+                `  ${card.rarity}\nlevel: ${card.level}\nweapon: ${card.weapon}\nskill: ${card.skill}\nrace: ${card.race}\ntribe: ${card.tribe}\n`;
             cardNode.on(Input.EventType.TOUCH_END, (_) => {
                 console.log(`card${i} clicked`);
                 cardClick(i);

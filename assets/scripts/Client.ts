@@ -253,6 +253,17 @@ export class Client extends Component {
     });
   }
 
+  public fuse_cards(cards: Array<Outpoint>): Promise<TxHash> {
+    let raw_outpoints: Array<RawOutpoint> = cards.map((outpoint) =>
+      this.raw_outpoint(outpoint)
+    );
+    return this.make_transaction_digest("fuse_cards()", raw_outpoints).then(
+      (result) => {
+        return this.send_transaction(result.digest);
+      }
+    );
+  }
+
   public start_tiktok_battle(
     card1: Outpoint,
     card2: Outpoint
@@ -307,104 +318,93 @@ export class Client extends Component {
         .map((item) => {
           let id = item.data.id;
           item.data.name = `卡牌 ${id}`;
-          item.data.texture = `https://caihong.love/tiktok-playground/assets/cards/r${(
-            id + 1
-          )
-            .toString()
-            .padStart(2, "0")}.png`;
           return item;
         });
     });
   }
+
+  //   public purchase_box(): Promise<TxHash> {
+  //     return new Promise((resolve) => resolve("0x0"));
+  //   }
+
+  //   public async open_box(box: Outpoint): Promise<TxHash> {
+  //     return new Promise((resolve) => resolve("0x0"));
+  //   }
+
+  //   public async upload_card_program(
+  //     card: Outpoint,
+  //     program: string
+  //   ): Promise<TxHash> {
+  //     return new Promise((resolve) => resolve("0x0"));
+  //   }
+
+  //   public async start_tiktok_battle(
+  //     card1: Outpoint,
+  //     card2: Outpoint
+  //   ): Promise<TxHash> {
+  //     return new Promise((resolve) => resolve("0x0"));
+  //   }
+
+  //   public get_boxes(): Promise<Array<PerosnalItem>> {
+  //     return new Promise((resolve) =>
+  //       resolve([
+  //         {
+  //           data: {
+  //             box_id: 1,
+  //             max_cards: 2,
+  //           },
+  //           outpoint: {
+  //             tx_hash: "0x0",
+  //             index: 0,
+  //           },
+  //         },
+  //         {
+  //           data: {
+  //             box_id: 2,
+  //             max_cards: 1,
+  //           },
+  //           outpoint: {
+  //             tx_hash: "0x0",
+  //             index: 0,
+  //           },
+  //         },
+  //         {
+  //           data: {
+  //             box_id: 3,
+  //             max_cards: 3,
+  //           },
+  //           outpoint: {
+  //             tx_hash: "0x0",
+  //             index: 0,
+  //           },
+  //         },
+  //       ])
+  //     );
+  //   }
+
+  //   public get_cards(): Promise<Array<PerosnalItem>> {
+  //     return new Promise((resolve) =>
+  //       resolve(
+  //         [...Array(38).keys()]
+  //           .map((i) => ({
+  //             id: i,
+  //             level: i,
+  //             rarity: "",
+  //             weapon: "rocket",
+  //             skill: "jump",
+  //             race: "g",
+  //             tribe: "a",
+  //             program: "",
+  //             name: `卡牌 ${i}`,
+  //           }))
+  //           .map((card) => ({
+  //             data: card,
+  //             outpoint: {
+  //               tx_hash: "0x0",
+  //               index: 0,
+  //             },
+  //           }))
+  //       )
+  //     );
+  //   }
 }
-
-//   public purchase_box(): Promise<TxHash> {
-//     return new Promise((resolve) => resolve("0x0"));
-//   }
-
-//   public async open_box(box: Outpoint): Promise<TxHash> {
-//     return new Promise((resolve) => resolve("0x0"));
-//   }
-
-//   public async upload_card_program(
-//     card: Outpoint,
-//     program: string
-//   ): Promise<TxHash> {
-//     return new Promise((resolve) => resolve("0x0"));
-//   }
-
-//   public async start_tiktok_battle(
-//     card1: Outpoint,
-//     card2: Outpoint
-//   ): Promise<TxHash> {
-//     return new Promise((resolve) => resolve("0x0"));
-//   }
-
-//   public get_boxes(): Promise<Array<PerosnalItem>> {
-//     return new Promise((resolve) =>
-//       resolve([
-//         {
-//           data: {
-//             box_id: 1,
-//             max_cards: 2,
-//           },
-//           outpoint: {
-//             tx_hash: "0x0",
-//             index: 0,
-//           },
-//         },
-//         {
-//           data: {
-//             box_id: 2,
-//             max_cards: 1,
-//           },
-//           outpoint: {
-//             tx_hash: "0x0",
-//             index: 0,
-//           },
-//         },
-//         {
-//           data: {
-//             box_id: 3,
-//             max_cards: 3,
-//           },
-//           outpoint: {
-//             tx_hash: "0x0",
-//             index: 0,
-//           },
-//         },
-//       ])
-//     );
-//   }
-
-//   public get_cards(): Promise<Array<PerosnalItem>> {
-//     return new Promise((resolve) =>
-//       resolve(
-//         [...Array(38).keys()]
-//           .map((i) => ({
-//             id: i,
-//             level: i,
-//             rarity: "",
-//             weapon: "rocket",
-//             skill: "jump",
-//             race: "g",
-//             tribe: "a",
-//             program: "",
-//             name: `卡牌 ${i}`,
-//             texture: `https://caihong.love/tiktok-playground/assets/cards/r${(
-//               i + 1
-//             )
-//               .toString()
-//               .padStart(2, "0")}.png`,
-//           }))
-//           .map((card) => ({
-//             data: card,
-//             outpoint: {
-//               tx_hash: "0x0",
-//               index: 0,
-//             },
-//           }))
-//       )
-//     );
-//   }
-// }
