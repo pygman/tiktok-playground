@@ -113,36 +113,52 @@ export class GameReadyManage extends Component {
         this.round.toString();
       this.cards[this.tik].program;
       let tikResult;
+      const tikC = this.cards[this.tik];
+      const tikTable = `{id=${tikC.id}, level=${tikC.level}, rarity=${tikC.rarity}, weapon=${tikC.weapon}, skill=${tikC.skill}, race=${tikC.race}, tribe=${tikC.tribe}, program=${tikC.program}}`;
       try {
-        tikResult = fengari.load(`
-                    local round = ${this.round}
-                    -- local object = ${this.cards[this.tok]}
+          const tikFunc = fengari.load(`
+                    // local round = ${this.round}
+                    // -- local object = ${this.cards[this.tik]}
                     ${this.cards[this.tik].program}
                 `)();
+          tikResult = fengari.load(`
+            ${tikFunc}
+            pnft(${this.round}, ${tikTable})
+          `)();
       } catch (e) {
         console.error(e);
         break;
       }
       // console.log(tikResult);
-      const tikItem = new cc.Node();
-      tikItem.name = `tikItem${this.round}`;
+      const tikItem = new cc.Node(`tikItem${this.round}`);
       tikItem.layer = cc.Layers.Enum.UI_2D;
       tikItem.addComponent(cc.Label);
       tikItem.getComponent(cc.Label).color = cc.Color.BLACK;
       tikItem.getComponent(cc.Label).fontSize = 16;
+      tikItem.getComponent(cc.Label).lineHeight = 20;
+      tikItem.getComponent(cc.Label).horizontalAlign = cc.HorizontalTextAlignment.LEFT;
+      tikItem.getComponent(cc.Label).verticalAlign = cc.VerticalTextAlignment.TOP;
       tikItem.getComponent(cc.Label).string = `Tik: ${tikResult}`;
-      tikItem.getComponent(cc.UITransform).setContentSize(100, 25);
+      tikItem.getComponent(cc.Label).overflow = cc.Overflow.RESIZE_HEIGHT;
+      tikItem.getComponent(cc.UITransform).setContentSize(200, 25);
+      tikItem.getComponent(cc.UITransform).setAnchorPoint(0, 1);
       tikItem.parent = content;
-      tikItem.setPosition(-80, -10 - this.round * 30);
+      tikItem.setPosition(-220, -10 - this.round * 150);
 
       this.cards[this.tik].program;
       let tokResult;
+      const tokC = this.cards[this.tok];
+      const tokTable = `{id=${tokC.id}, level=${tokC.level}, rarity=${tokC.rarity}, weapon=${tokC.weapon}, skill=${tokC.skill}, race=${tokC.race}, tribe=${tokC.tribe}, program=${tokC.program}}`;
       try {
-        tokResult = fengari.load(`
+          const tokFunc = fengari.load(`
                     local round = ${this.round}
-                    -- local object = ${this.cards[this.tik]}
+                    -- local object = ${this.cards[this.tok]}
                     ${this.cards[this.tik].program}
                 `)();
+          tikResult = fengari.load(`
+            ${tokFunc}
+            pnft(${this.round}, ${tokTable})
+          `)();
       } catch (e) {
         console.error(e);
         break;
@@ -153,10 +169,15 @@ export class GameReadyManage extends Component {
       tokItem.addComponent(cc.Label);
       tokItem.getComponent(cc.Label).color = cc.Color.BLACK;
       tokItem.getComponent(cc.Label).fontSize = 16;
-      tokItem.getComponent(cc.Label).string = `Tok: ${tikResult}`;
-      tokItem.getComponent(cc.UITransform).setContentSize(100, 25);
+      tokItem.getComponent(cc.Label).lineHeight = 20;
+      tokItem.getComponent(cc.Label).horizontalAlign = cc.HorizontalTextAlignment.LEFT;
+      tokItem.getComponent(cc.Label).verticalAlign = cc.VerticalTextAlignment.TOP;
+      tokItem.getComponent(cc.Label).string = `Tok: ${tokResult}`;
+      tokItem.getComponent(cc.Label).overflow = cc.Overflow.RESIZE_HEIGHT;
+      tokItem.getComponent(cc.UITransform).setContentSize(200, 25);
+      tokItem.getComponent(cc.UITransform).setAnchorPoint(1, 1);
       tokItem.parent = content;
-      tokItem.setPosition(20, -25 - this.round * 30);
+      tokItem.setPosition(220, -85 - this.round * 150);
 
       if (
         tikResult === "游戏结束" ||
@@ -174,9 +195,9 @@ export class GameReadyManage extends Component {
       overItem.getComponent(cc.Label).color = cc.Color.BLACK;
       overItem.getComponent(cc.Label).fontSize = 16;
       overItem.getComponent(cc.Label).string = `游戏结束`;
-      overItem.getComponent(cc.UITransform).setContentSize(100, 25);
+      overItem.getComponent(cc.UITransform).setContentSize(300, 25);
       overItem.parent = content;
-      overItem.setPosition(0, -650);
+      overItem.setPosition(0, -3100);
     }
     /*
         const msgBoxNode = cc.instantiate(this.msgBoxPrefab);

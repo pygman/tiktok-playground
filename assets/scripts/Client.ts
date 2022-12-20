@@ -398,6 +398,20 @@ export class Client extends Component {
   //             race: "g",
   //             tribe: "a",
   //             program: `return "ok${i}"`,
+  //             program: `
+  //             local fn1, err = load(tik.program)
+  //             assert(err == nil, "tiktok: bad program 1")
+  //             local fn2, err = load(tok.program)
+  //             assert(err == nil, "tiktok: bad program 2")
+  //               //             local ok, pnft1 = pcall(fn1)
+  //             assert(ok, "tiktok: bad program 1")
+  //             local ok, pnft2 = pcall(fn2)
+  //             assert(ok, "tiktok: bad program 2")
+  //               //             for round = 1, KOC.global.max_rounds do
+  //             pcall(pnft1, round, tik)
+  //             pcall(pnft2, round, tok)
+  //             end
+  //             `,
   //             name: `卡牌 ${i}`,
   //           }))
   //           .map((card) => ({
