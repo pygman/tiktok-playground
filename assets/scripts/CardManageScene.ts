@@ -193,7 +193,8 @@ export class CardManage extends Component {
                     });
                 }
                 cardLeftNode.getChildByName('title').getComponent(cc.Label).string = cardLeft.name;
-                cardLeftNode.getChildByName('desc').getComponent(cc.Label).string = `  ${cardLeft.rarity}\nlevel: ${cardLeft.level}\nweapon: ${cardLeft.weapon}\nskill: ${cardLeft.skill}\n`;
+                cardLeftNode.getChildByName('desc').getComponent(cc.Label).string =
+                    `  ${cardLeft.rarity}\nlevel: ${cardLeft.level}\nweapon: ${cardLeft.weapon}\nskill: ${cardLeft.skill}\nrace: ${cardLeft.race}\ntribe: ${cardLeft.tribe}\n`;
 
                 const cardRight = this.cards[i];
                 const cardRightNode = cc.instantiate(this.cardPrefab)
@@ -207,7 +208,8 @@ export class CardManage extends Component {
                     });
                 }
                 cardRightNode.getChildByName('title').getComponent(cc.Label).string = cardRight.name;
-                cardRightNode.getChildByName('desc').getComponent(cc.Label).string = `  ${cardRight.rarity}\nlevel: ${cardRight.level}\nweapon: ${cardRight.weapon}\nskill: ${cardRight.skill}\n`;
+                cardRightNode.getChildByName('desc').getComponent(cc.Label).string =
+                    `  ${cardRight.rarity}\nlevel: ${cardRight.level}\nweapon: ${cardRight.weapon}\nskill: ${cardRight.skill}\nrace: ${cardRight.race}\ntribe: ${cardRight.tribe}\n`;
 
                 cc.tween(cardLeftNode)
                     .to(1.2, { position: new cc.Vec3(-60, 0, 0) }, { easing: 'elasticOut' })
@@ -261,7 +263,8 @@ export class CardManage extends Component {
             //     cardNode.getChildByName('pic').getComponent(cc.Sprite).spriteFrame = cc.SpriteFrame.createWithImage(asset as cc.ImageAsset);
             // })
             cardNode.getChildByName('title').getComponent(cc.Label).string = card.name;
-            cardNode.getChildByName('desc').getComponent(cc.Label).string = `  ${card.rarity}\nlevel: ${card.level}\nweapon: ${card.weapon}\nskill: ${card.skill}\n`;
+            cardNode.getChildByName('desc').getComponent(cc.Label).string =
+                `  ${card.rarity}\nlevel: ${card.level}\nweapon: ${card.weapon}\nskill: ${card.skill}\nrace: ${card.race}\ntribe: ${card.tribe}\n`;
             cardNode.on(Input.EventType.MOUSE_UP, (event) => {
                 console.log(`card${i} ${event.getButton()} clicked`);
                 if (event.getButton() === 0) {

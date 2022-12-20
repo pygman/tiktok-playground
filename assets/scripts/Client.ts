@@ -372,7 +372,7 @@ export class Client extends Component {
         return new Promise((resolve) => resolve([...Array(38).keys()].map((i) => ({
             id: i,
             level: i,
-            rarity: '',
+            rarity: 'Rare',
             weapon: 'rocket',
             skill: 'jump',
             race: 'g',
