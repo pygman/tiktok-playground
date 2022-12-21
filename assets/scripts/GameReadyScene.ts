@@ -108,7 +108,7 @@ export class GameReadyManage extends Component {
       .getChildByName("view")
       .getChildByName("content");
     content.removeAllChildren();
-    for (this.round = 0; this.round < 20; this.round++) {
+    for (this.round = 0; this.round < 5; this.round++) {
       this.node.getChildByName("Round").getComponent(cc.Label).string =
         this.round.toString();
       const tikC = this.cards[this.tik];
@@ -160,7 +160,7 @@ export class GameReadyManage extends Component {
         break;
       }
     }
-    if (this.round === 20) {
+    if (this.round === 5) {
       const overItem = new cc.Node(`tokItem${this.round}`);
       overItem.layer = cc.Layers.Enum.UI_2D;
       overItem.addComponent(cc.Label);
